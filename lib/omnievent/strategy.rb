@@ -127,9 +127,13 @@ module OmniEvent
       @token = options[:token]
     end
 
-    def event; end
+    def event
+      raise NotImplementedError
+    end
 
-    def event_list; end
+    def event_list
+      raise NotImplementedError
+    end
 
     # Direct access to the OmniEvent logger, automatically prefixed
     # with this strategy's name.
