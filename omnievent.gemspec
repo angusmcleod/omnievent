@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.version = OmniEvent::VERSION
   spec.authors = ["Angus McLeod"]
   spec.email = ["angus@pavilion.tech"]
-  spec.description = "Manage event data from any calendar, event discovery, event ticketing,
+  spec.description = "Manage events from any calendar, event discovery, event ticketing,
     event management, social network or video conferencing provider."
   spec.summary = "Manage events from multiple providers."
   spec.homepage = "https://github.com/paviliondev/omnievent"

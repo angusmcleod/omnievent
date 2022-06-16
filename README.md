@@ -1,6 +1,6 @@
 # Omnievent
 
-Manage event data from any calendar, event discovery, event ticketing, event management, social network or video conferencing provider.
+Manage events from any calendar, event discovery, event ticketing, event management, social network or video conferencing provider.
 
 ## Installation
 
