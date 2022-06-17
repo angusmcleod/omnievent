@@ -286,6 +286,45 @@ RSpec.describe OmniEvent::EventHash do
           end
         end
       end
+
+      context "registrations" do
+        it "requires an array" do
+          subject.associated_data.registrations = {}
+          expect(subject.associated_data.registrations_valid?).to eq(false)
+        end
+
+        context "validation" do
+          it "validates valid registration name" do
+            subject.associated_data.registrations = [{ name: "Angus McLeod", email: "angus@test.com", status: "confirmed" }]
+            expect(subject.associated_data.registrations_valid?).to eq(true)
+          end
+
+          it "invalidates invalid registration name" do
+            subject.associated_data.registrations = [{ name: { en: "Angus McLeod" }, email: "angus@test.com", status: "confirmed" }]
+            expect(subject.associated_data.registrations_valid?).to eq(false)
+          end
+
+          it "validates valid registration email" do
+            subject.associated_data.registrations = [{ email: "angus@test.com", status: "confirmed" }]
+            expect(subject.associated_data.registrations_valid?).to eq(true)
+          end
+
+          it "invalidates invalid registration email" do
+            subject.associated_data.registrations = [{ email: "angus@test.", status: "confirmed" }]
+            expect(subject.associated_data.registrations_valid?).to eq(false)
+          end
+
+          it "validates valid registration status" do
+            subject.associated_data.registrations = [{ email: "angus@test.com", status: "confirmed" }]
+            expect(subject.associated_data.registrations_valid?).to eq(true)
+          end
+
+          it "invalidates invalid registration email" do
+            subject.associated_data.registrations = [{ email: "angus@test.com", status: "rejected" }]
+            expect(subject.associated_data.registrations_valid?).to eq(false)
+          end
+        end
+      end
     end
   end
 end

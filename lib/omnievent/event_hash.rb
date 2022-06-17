@@ -168,7 +168,7 @@ module OmniEvent
           location: %w[name address city postal_code country latitude longitude url],
           virtual_locations: %w[uri type code label],
           organizer: %w[name email uris],
-          registrations: %w[]
+          registrations: %w[name email status]
         }
       end
 
@@ -198,6 +198,7 @@ module OmniEvent
         return false unless virtual_locations.is_a?(Array)
 
         virtual_locations.all? do |virtual_location|
+          return false unless virtual_location.is_a?(Hash)
           return false unless virtual_location["uri"] && virtual_location["type"]
           return false unless permitted?(virtual_location.keys, :virtual_locations)
 
@@ -230,6 +231,38 @@ module OmniEvent
             OmniEvent::Utils.all_valid_type?(value, :string)
           else
             false
+          end
+        end
+      end
+
+      def self.permitted_registration_statuses
+        %w[
+          confirmed
+          declined
+          tentative
+        ]
+      end
+
+      def registrations_valid?
+        return true unless registrations
+        return false unless registrations.is_a?(Array)
+
+        registrations.all? do |registration|
+          return false unless registration.is_a?(Hash)
+          return false unless registration["email"] && registration["status"]
+          return false unless permitted?(registration.keys, :registrations)
+
+          registration.all? do |key, value|
+            case key
+            when "name"
+              OmniEvent::Utils.valid_type?(value, :string)
+            when "email"
+              OmniEvent::Utils.valid_email?(value)
+            when "status"
+              self.class.permitted_registration_statuses.include?(value)
+            else
+              false
+            end
           end
         end
       end
