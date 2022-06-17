@@ -28,7 +28,7 @@ RSpec.describe OmniEvent::Strategy do
         expect(subject.default_options["wakka"]).to eq("doo")
       end
 
-      it "works when block doesn't evaluate to true" do
+      it "works when block doesnt evaluate to true" do
         environment_variable = nil
         subject.configure do |c|
           c.abc = "123"

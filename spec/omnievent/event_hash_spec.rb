@@ -28,7 +28,8 @@ RSpec.describe OmniEvent::EventHash do
       OmniEvent::EventHash.new(
         provider: "eventbrite",
         data: { start_time: Time.now.iso8601, name: "My Event" },
-        metadata: {}
+        metadata: {},
+        associated_data: {}
       )
     end
 
@@ -145,6 +146,144 @@ RSpec.describe OmniEvent::EventHash do
         it "invalidates invalid taxonomies" do
           subject.metadata.taxonomies = [{ category: "technology" }, { tag: "blockchain" }]
           expect(subject.metadata.taxonomies_valid?).to eq(false)
+        end
+      end
+    end
+
+    context "associated_data" do
+      it "only permits listed attributes" do
+        subject.associated_data.tickets = { id: "12345" }
+        expect(subject).not_to be_valid
+      end
+
+      context "location" do
+        it "requires a hash" do
+          subject.associated_data.location = []
+          expect(subject.associated_data.location_valid?).to eq(false)
+        end
+
+        context "validation" do
+          it "validates valid location addresses" do
+            subject.associated_data.location = { postal_code: "6000",
+                                                 address: "827-905 Hay St, Perth WA 6000, Australia", city: "Perth" }
+            expect(subject.associated_data.location_valid?).to eq(true)
+          end
+
+          it "invalidates invalid location addresses" do
+            subject.associated_data.location = { postal_code: 6000,
+                                                 address: "827-905 Hay St, Perth WA 6000, Australia", city: "Perth" }
+            expect(subject.associated_data.location_valid?).to eq(false)
+          end
+
+          it "validates valid location country codes" do
+            subject.associated_data.location = { country: "AU", address: "827-905 Hay St, Perth WA 6000, Australia",
+                                                 city: "Perth" }
+            expect(subject.associated_data.location_valid?).to eq(true)
+          end
+
+          it "invalidates invalid location country codes" do
+            subject.associated_data.location = { country: "AUD", address: "827-905 Hay St, Perth WA 6000, Australia",
+                                                 city: "Perth" }
+            expect(subject.associated_data.location_valid?).to eq(false)
+          end
+
+          it "validates valid location coordinates" do
+            subject.associated_data.location = { latitude: "31.9529", longitude: "115.8546" }
+            expect(subject.associated_data.location_valid?).to eq(true)
+          end
+
+          it "invalidates invalid location coordinates" do
+            subject.associated_data.location = { latitude: "190.9529", longitude: "115.8546" }
+            expect(subject.associated_data.location_valid?).to eq(false)
+          end
+
+          it "validates valid location urls" do
+            subject.associated_data.location = { latitude: "31.9529", longitude: "115.8546", url: "https://www.ptt.wa.gov.au/venues/his-majestys-theatre/" }
+            expect(subject.associated_data.location_valid?).to eq(true)
+          end
+
+          it "invalidates invalid location urls" do
+            subject.associated_data.location = { latitude: "31.9529", longitude: "115.8546",
+                                                 url: "https/www.ptt.wa.gov.au/venues/his-majestys-theatre/" }
+            expect(subject.associated_data.location_valid?).to eq(false)
+          end
+
+          it "invalidates invalid location coordinates" do
+            subject.associated_data.location = { latitude: "190.9529", longitude: "115.8546" }
+            expect(subject.associated_data.location_valid?).to eq(false)
+          end
+        end
+      end
+
+      context "virtual_locations" do
+        it "requires an array" do
+          subject.associated_data.virtual_locations = {}
+          expect(subject.associated_data.virtual_location_valid?).to eq(false)
+        end
+
+        context "validation" do
+          it "validates valid virtual_location uris" do
+            subject.associated_data.virtual_locations = [{ uri: "https://video-conference.com/12345", type: "video",
+                                                           code: "1234", label: "My Video Room" }]
+            expect(subject.associated_data.virtual_location_valid?).to eq(true)
+          end
+
+          it "invalidates invalid virtual_location uris" do
+            subject.associated_data.virtual_locations = [{ uri: "httpsvideo-conference.com/12345", type: "video",
+                                                           code: "1234", label: "My Video Room" }]
+            expect(subject.associated_data.virtual_location_valid?).to eq(false)
+          end
+
+          it "validates valid virtual_location types" do
+            subject.associated_data.virtual_locations = [{ uri: "https://video-conference.com/12345", type: "video",
+                                                           code: "1234", label: "My Video Room" }]
+            expect(subject.associated_data.virtual_location_valid?).to eq(true)
+          end
+
+          it "invalidates invalid virtual_location types" do
+            subject.associated_data.virtual_locations = [{ uri: "https://video-conference.com/12345", type: "zoom",
+                                                           code: "1234", label: "My Video Room" }]
+            expect(subject.associated_data.virtual_location_valid?).to eq(false)
+          end
+        end
+      end
+
+      context "organizer" do
+        it "requires a hash" do
+          subject.associated_data.organizer = []
+          expect(subject.associated_data.organizer_valid?).to eq(false)
+        end
+
+        context "validation" do
+          it "validates valid organizer name" do
+            subject.associated_data.organizer = { name: "Dance Society" }
+            expect(subject.associated_data.organizer_valid?).to eq(true)
+          end
+
+          it "invalidates invalid organizer name" do
+            subject.associated_data.organizer = { name: { en: "Dance Society" } }
+            expect(subject.associated_data.organizer_valid?).to eq(false)
+          end
+
+          it "validates valid organizer email" do
+            subject.associated_data.organizer = { name: "Dance Society", email: "joe@dance-society.com" }
+            expect(subject.associated_data.organizer_valid?).to eq(true)
+          end
+
+          it "invalidates invalid organizer email" do
+            subject.associated_data.organizer = { name: "Dance Society", email: "joe@dance-society." }
+            expect(subject.associated_data.organizer_valid?).to eq(false)
+          end
+
+          it "validates valid organizer uris" do
+            subject.associated_data.organizer = { name: "Dance Society", email: "joe@dance-society.com", uris: ["https://dance-society.com"] }
+            expect(subject.associated_data.organizer_valid?).to eq(true)
+          end
+
+          it "invalidates invalid organizer uris" do
+            subject.associated_data.organizer = { name: "Dance Society", email: "joe@dance-society.", uris: [1234] }
+            expect(subject.associated_data.organizer_valid?).to eq(false)
+          end
         end
       end
     end

@@ -11,5 +11,17 @@
   "description": "For use in the developer strategy",
   "status": "draft",
   "url": "https://event-platfom.com/events/developer-event",
-  "virtual": false
+  "virtual": false,
+  "location": {
+    "region": "Østlandet",
+    "country": "Norway",
+    "countryCode": "no",
+    "latitude": "59.9075",
+    "longitude": "10.7531",
+    "address1": "Oslo Opera House",
+    "address2": "Kirsten Flagstads Plass 1, 0150 Oslo, Norway",
+    "address3": "",
+    "city": "Oslo",
+    "postalCode": "0150"
+  }
 }

@@ -139,7 +139,7 @@ module OmniEvent
     # with this strategy's name.
     #
     # @example
-    #   log :warn, "This is a warning."
+    #   log :warn, 'This is a warning.'
     def log(level, message)
       OmniEvent.logger.send(level, "(#{name}) #{message}")
     end

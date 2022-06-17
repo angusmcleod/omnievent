@@ -15,13 +15,19 @@ Metrics/BlockLength:
 
 Metrics/MethodLength:
   CountComments: false
-  Max: 15
+  Max: 20
 
 Metrics/ParameterLists:
   Max: 4
   CountKeywordArgs: true
 
 Metrics/AbcSize:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
   Enabled: false
 
 Style/StringLiterals:

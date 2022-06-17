@@ -32,8 +32,27 @@ module OmniEvent
       TZInfo::Timezone.all_identifiers.include?(value)
     end
 
-    def valid_locale?(value)
+    def valid_language_code?(value)
       !!ISO_639.find_by_code(value)
+    end
+
+    def valid_country_code?(value)
+      !!TZInfo::Country.all_codes.include?(value)
+    end
+
+    def valid_coordinate?(value, type)
+      case type
+      when :latitude
+        /^-?([1-8]?\d(?:\.\d{1,})?|90(?:\.0{1,6})?)$/ =~ value
+      when :longitude
+        /^-?((?:1[0-7]|[1-9])?\d(?:\.\d{1,})?|180(?:\.0{1,})?)$/ =~ value
+      else
+        false
+      end
+    end
+
+    def valid_email?(value)
+      URI::MailTo::EMAIL_REGEXP =~ value
     end
 
     def valid_url?(value)
