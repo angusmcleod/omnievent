@@ -295,12 +295,14 @@ RSpec.describe OmniEvent::EventHash do
 
         context "validation" do
           it "validates valid registration name" do
-            subject.associated_data.registrations = [{ name: "Angus McLeod", email: "angus@test.com", status: "confirmed" }]
+            subject.associated_data.registrations = [{ name: "Angus McLeod", email: "angus@test.com",
+                                                       status: "confirmed" }]
             expect(subject.associated_data.registrations_valid?).to eq(true)
           end
 
           it "invalidates invalid registration name" do
-            subject.associated_data.registrations = [{ name: { en: "Angus McLeod" }, email: "angus@test.com", status: "confirmed" }]
+            subject.associated_data.registrations = [{ name: { en: "Angus McLeod" }, email: "angus@test.com",
+                                                       status: "confirmed" }]
             expect(subject.associated_data.registrations_valid?).to eq(false)
           end
 
