@@ -1,4 +1,4 @@
-# Omnievent (Work in Progress)
+# OmniEvent (Work in Progress)
 
 Manage events from any calendar, event discovery, event ticketing, event management, social network or video conferencing provider.
 
@@ -14,7 +14,11 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-The gem is still being worked on and not yet ready for general use.
+The gem is still being worked on and not yet ready for production use.
+
+## Development
+
+To start working on OmniEvent
 
 ## Contributing
 
@@ -27,3 +31,11 @@ The gem is available as open source under the terms of the [MIT License](https:/
 ## Code of Conduct
 
 Everyone interacting in the Omnievent project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/paviliondev/omnievent/blob/main/CODE_OF_CONDUCT.md).
+
+## Background
+
+This gem is significantly inspired by, and structurally similar to, [OmniAuth](https://github.com/omniauth/omniauth). It is the result of research conducted by Pavilion in the [NGI DAPSI program](https://dapsi.ngi.eu/), specifically:
+
+> A study of the existing calendar event standards, and attempts to develop a standard calendar event data model, including a comparative analysis of the current data models of popular event-related services.
+
+The research and its associated data will be made publicly available in the coming months.
