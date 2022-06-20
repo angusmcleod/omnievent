@@ -1,4 +1,4 @@
-# Omnievent
+# Omnievent (Work in Progress)
 
 Manage events from any calendar, event discovery, event ticketing, event management, social network or video conferencing provider.
 
@@ -14,7 +14,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-TODO: Write usage instructions here
+The gem is still being worked on and not yet ready for general use.
 
 ## Contributing
 
