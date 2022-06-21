@@ -8,12 +8,8 @@ RSpec.describe OmniEvent::Strategies::Developer do
   end
 
   def raw_data
-    fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "event.json")
+    fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "event_list.json")
     @raw_data ||= JSON.parse(File.open(fixture).read).to_h
-  end
-
-  it "returns an event" do
-    expect(OmniEvent.event(:developer)).to be_kind_of(OmniEvent::EventHash)
   end
 
   it "returns an event list" do
@@ -21,17 +17,21 @@ RSpec.describe OmniEvent::Strategies::Developer do
   end
 
   it "returns valid events" do
-    event = OmniEvent.event(:developer)
-    expect(event).to be_valid
+    expect(OmniEvent.event_list(:developer)).to all(be_valid)
   end
 
-  it "returns event with metadata" do
-    event = OmniEvent.event(:developer)
-    expect(event.metadata.id).to eq(raw_data["id"])
+  it "returns events with metadata" do
+    event = OmniEvent.event_list(:developer)[0]
+    expect(event.metadata.id).to eq(raw_data["events"][0]["id"])
   end
 
-  it "returns event with associated data" do
-    event = OmniEvent.event(:developer)
-    expect(event.associated_data.location.country).to eq(raw_data["location"]["countryCode"])
+  it "returns events with associated location data" do
+    event = OmniEvent.event_list(:developer)[0]
+    expect(event.associated_data.location.country).to eq(raw_data["events"][0]["location"]["countryCode"])
+  end
+
+  it "returns events with associated virtual location data" do
+    event = OmniEvent.event_list(:developer)[1]
+    expect(event.associated_data.virtual_location["entry_points"].first["type"]).to eq("video")
   end
 end

@@ -23,9 +23,10 @@ module OmniEvent
 
     # Base for data hashes
     class EventHashBase < OmniEvent::KeyStore
-      def permitted?(keys, attribute = nil)
+      def permitted?(keys, attribute = nil, sub_attribute = nil)
         permitted = self.class.permitted_attributes
-        permitted = attribute ? permitted[attribute] : permitted
+        permitted = permitted[attribute] if attribute
+        permitted = permitted[sub_attribute] if sub_attribute
         permitted = permitted.is_a?(Hash) ? permitted.keys.map(&:to_s) : permitted
         (keys - permitted).empty?
       end
@@ -66,7 +67,6 @@ module OmniEvent
           description
           status
           url
-          virtual
         ]
       end
 
@@ -80,8 +80,8 @@ module OmniEvent
       def self.permitted_statuses
         %w[
           draft
+          published
           cancelled
-          confirmed
         ]
       end
 
@@ -111,10 +111,6 @@ module OmniEvent
 
       def url_valid?
         OmniEvent::Utils.valid_url?(url)
-      end
-
-      def virtual_valid?
-        OmniEvent::Utils.valid_type?(virtual, :boolean)
       end
     end
 
@@ -166,10 +162,19 @@ module OmniEvent
       def self.permitted_attributes
         {
           location: %w[name address city postal_code country latitude longitude url],
-          virtual_locations: %w[uri type code label],
+          virtual_location: { "entry_points": %w[uri type code label] },
           organizer: %w[name email uris],
           registrations: %w[name email status]
         }
+      end
+
+      def self.permitted_entry_point_attributes
+        %w[
+          uri
+          type
+          code
+          label
+        ]
       end
 
       def location_valid?
@@ -194,25 +199,25 @@ module OmniEvent
       end
 
       def virtual_location_valid?
-        return true unless virtual_locations
-        return false unless virtual_locations.is_a?(Array)
+        return true unless virtual_location
+        return false unless virtual_location.is_a?(Hash)
+        return true unless virtual_location["entry_points"]
 
-        virtual_locations.all? do |virtual_location|
-          return false unless virtual_location.is_a?(Hash)
-          return false unless virtual_location["uri"] && virtual_location["type"]
-          return false unless permitted?(virtual_location.keys, :virtual_locations)
-
-          return false unless case virtual_location["type"]
+        virtual_location["entry_points"].all? do |entry_point|
+          return false unless entry_point.is_a?(Hash)
+          return false unless entry_point["uri"] && entry_point["type"]
+          return false unless permitted?(entry_point.keys, :virtual_location, :entry_points)
+          return false unless case entry_point["type"]
                               when "video"
-                                OmniEvent::Utils.valid_url?(virtual_location["uri"])
+                                OmniEvent::Utils.valid_url?(entry_point["uri"])
                               when "phone", "sip"
-                                OmniEvent::Utils.valid_type?(virtual_location["uri"], :string)
+                                OmniEvent::Utils.valid_type?(entry_point["uri"], :string)
                               else
                                 false
                               end
 
-          OmniEvent::Utils.valid_type?(virtual_location["label"], :string) &&
-            OmniEvent::Utils.valid_type?(virtual_location["code"], :string)
+          OmniEvent::Utils.valid_type?(entry_point["label"], :string) &&
+            OmniEvent::Utils.valid_type?(entry_point["code"], :string)
         end
       end
 

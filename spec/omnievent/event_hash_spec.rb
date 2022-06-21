@@ -108,16 +108,6 @@ RSpec.describe OmniEvent::EventHash do
           subject.data.url = "event-platform/events/my-event"
           expect(subject.data.url_valid?).to eq(false)
         end
-
-        it "validates valid virtual" do
-          subject.data.virtual = true
-          expect(subject.data.virtual_valid?).to eq(true)
-        end
-
-        it "invalidates invalid virtual" do
-          subject.data.virtual = { online: true }
-          expect(subject.data.virtual_valid?).to eq(false)
-        end
       end
     end
 
@@ -215,34 +205,44 @@ RSpec.describe OmniEvent::EventHash do
         end
       end
 
-      context "virtual_locations" do
-        it "requires an array" do
-          subject.associated_data.virtual_locations = {}
+      context "virtual_location" do
+        it "requires a hash" do
+          subject.associated_data.virtual_location = []
           expect(subject.associated_data.virtual_location_valid?).to eq(false)
         end
 
+        def virtual_location(entry_points); end
+
         context "validation" do
-          it "validates valid virtual_location uris" do
-            subject.associated_data.virtual_locations = [{ uri: "https://video-conference.com/12345", type: "video",
-                                                           code: "1234", label: "My Video Room" }]
+          it "validates valid virtual_location entry_point uris" do
+            subject.associated_data.virtual_location = {
+              entry_points: [{ uri: "https://video-conference.com/12345", type: "video", code: "1234",
+                               label: "My Video Room" }]
+            }
             expect(subject.associated_data.virtual_location_valid?).to eq(true)
           end
 
-          it "invalidates invalid virtual_location uris" do
-            subject.associated_data.virtual_locations = [{ uri: "httpsvideo-conference.com/12345", type: "video",
-                                                           code: "1234", label: "My Video Room" }]
+          it "invalidates invalid virtual_location entry_point uris" do
+            subject.associated_data.virtual_location = {
+              entry_points: [{ uri: "httpsvideo-conference.com/12345", type: "video", code: "1234",
+                               label: "My Video Room" }]
+            }
             expect(subject.associated_data.virtual_location_valid?).to eq(false)
           end
 
-          it "validates valid virtual_location types" do
-            subject.associated_data.virtual_locations = [{ uri: "https://video-conference.com/12345", type: "video",
-                                                           code: "1234", label: "My Video Room" }]
+          it "validates valid virtual_location entry_point types" do
+            subject.associated_data.virtual_location = {
+              entry_points: [{ uri: "https://video-conference.com/12345", type: "video", code: "1234",
+                               label: "My Video Room" }]
+            }
             expect(subject.associated_data.virtual_location_valid?).to eq(true)
           end
 
-          it "invalidates invalid virtual_location types" do
-            subject.associated_data.virtual_locations = [{ uri: "https://video-conference.com/12345", type: "zoom",
-                                                           code: "1234", label: "My Video Room" }]
+          it "invalidates invalid virtual_location entry_point types" do
+            subject.associated_data.virtual_location = {
+              entry_points: [{ uri: "https://video-conference.com/12345", type: "zoom", code: "1234",
+                               label: "My Video Room" }]
+            }
             expect(subject.associated_data.virtual_location_valid?).to eq(false)
           end
         end

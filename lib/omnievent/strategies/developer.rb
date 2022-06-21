@@ -25,7 +25,7 @@ module OmniEvent
       option :name, "developer"
 
       def raw_data
-        fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "event.json")
+        fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "event_list.json")
         @raw_data ||= JSON.parse(File.open(fixture).read).to_h
       end
 
@@ -42,8 +42,8 @@ module OmniEvent
         }
       end
 
-      def location
-        raw_data["location"].each_with_object({}) do |(raw_key, raw_value), result|
+      def map_location(raw_location)
+        raw_location.each_with_object({}) do |(raw_key, raw_value), result|
           next unless location_key_map[raw_key.to_sym]
 
           key = location_key_map[raw_key.to_sym]
@@ -57,21 +57,18 @@ module OmniEvent
         end
       end
 
-      def event
-        OmniEvent::EventHash.new(
-          provider: name,
-          data: raw_data.slice(*OmniEvent::EventHash::DataHash.permitted_attributes),
-          metadata: raw_data.slice(*OmniEvent::EventHash::MetadataHash.permitted_attributes),
-          associated_data: {
-            location: location
-          }
-        )
-      end
-
       def event_list
-        [
-          event
-        ]
+        raw_data["events"].map do |raw_event|
+          OmniEvent::EventHash.new(
+            provider: name,
+            data: raw_event.slice(*OmniEvent::EventHash::DataHash.permitted_attributes),
+            metadata: raw_event.slice(*OmniEvent::EventHash::MetadataHash.permitted_attributes),
+            associated_data: {
+              location: map_location(raw_event["location"]),
+              virtual_location: raw_event["virtual_location"]
+            }
+          )
+        end
       end
     end
   end
