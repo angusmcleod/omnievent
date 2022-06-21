@@ -43,7 +43,7 @@ module OmniEvent
       end
 
       def location
-        raw_data.each_with_object({}) do |(raw_key, raw_value), result|
+        raw_data['location'].each_with_object({}) do |(raw_key, raw_value), result|
           next unless location_key_map[raw_key.to_sym]
 
           key = location_key_map[raw_key.to_sym]
