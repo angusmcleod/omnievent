@@ -68,8 +68,6 @@ module OmniEvent
       strategy_instance(provider).request(:list_events, opts)
     end
 
-    protected
-
     def strategy_instance(provider)
       klass = provider_class(provider)
 
