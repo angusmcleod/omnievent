@@ -22,67 +22,74 @@ module OmniEvent
 
   class ActiveStrategies < OmniEvent::KeyStore; end
 
-  # The default logger.
-  def self.default_logger
-    logger = ::Logger.new($stdout)
-    logger.progname = "omniauth"
-    logger
-  end
+  EVENT_LIST_OPTIONS = %i[
+    from_time
+  ].freeze
 
-  # Get the configuration.
-  def self.config
-    Configuration.instance
-  end
+  class << self
+    # The default logger.
+    def default_logger
+      logger = ::Logger.new($stdout)
+      logger.progname = "omniauth"
+      logger
+    end
 
-  # Setup the configuration.
-  def self.configure
-    yield config
-  end
+    # Get the configuration.
+    def config
+      Configuration.instance
+    end
 
-  # Get the current logger.
-  def self.logger
-    config.logger
-  end
+    # Setup the configuration.
+    def configure
+      yield config
+    end
 
-  # All available strategies.
-  def self.strategies
-    @strategies ||= []
-  end
+    # Get the current logger.
+    def logger
+      config.logger
+    end
 
-  # All active strategies.
-  def self.active_strategies
-    @active_strategies ||= ActiveStrategies.new
-  end
+    # All available strategies.
+    def strategies
+      @strategies ||= []
+    end
 
-  # Get event.
-  def self.event(provider, opts = {})
-    strategy_instance(provider).request(:event, opts)
-  end
+    # All active strategies.
+    def active_strategies
+      @active_strategies ||= ActiveStrategies.new
+    end
 
-  # List events.
-  def self.event_list(provider, opts = {})
-    strategy_instance(provider).request(:event_list, opts)
-  end
+    # List events.
+    def list_events(provider = nil, opts = {})
+      raise ArgumentError, "You need to pass a provider name as the first argument." unless provider
 
-  def self.strategy_instance(provider)
-    klass = provider_class(provider)
+      opts = opts.slice(*EVENT_LIST_OPTIONS)
 
-    raise MissingStrategy, "Could not find matching strategy for #{klass.inspect}." unless klass
+      strategy_instance(provider).request(:list_events, opts)
+    end
 
-    strategy_proc = active_strategies[klass]
+    protected
 
-    raise StrategyNotConfigured, "Strategy for #{klass.inspect} has not be configured." unless strategy_proc
+    def strategy_instance(provider)
+      klass = provider_class(provider)
 
-    strategy_proc.call
-  end
+      raise MissingStrategy, "Could not find matching strategy for #{klass.inspect}." unless klass
 
-  def self.provider_class(provider)
-    klass = OmniEvent::Utils.camelize(provider.to_s).to_s
+      strategy_proc = active_strategies[klass]
 
-    begin
-      OmniEvent::Strategies.const_get(klass, false)
-    rescue NameError
-      false
+      raise StrategyNotConfigured, "Strategy for #{klass.inspect} has not be configured." unless strategy_proc
+
+      strategy_proc.call
+    end
+
+    def provider_class(provider)
+      klass = OmniEvent::Utils.camelize(provider.to_s).to_s
+
+      begin
+        OmniEvent::Strategies.const_get(klass, false)
+      rescue NameError
+        false
+      end
     end
   end
 end

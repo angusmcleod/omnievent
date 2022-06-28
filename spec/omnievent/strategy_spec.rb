@@ -48,7 +48,6 @@ RSpec.describe OmniEvent::Strategy do
   it "raises a NotImplementedError when strategy has not implemented interface methods" do
     strategy = Class.new
     strategy.send(:include, OmniEvent::Strategy)
-    expect { strategy.new.send("event") }.to raise_error(NotImplementedError)
-    expect { strategy.new.send("event_list") }.to raise_error(NotImplementedError)
+    expect { strategy.new.send("list_events") }.to raise_error(NotImplementedError)
   end
 end

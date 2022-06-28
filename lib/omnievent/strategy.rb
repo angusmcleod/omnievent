@@ -13,11 +13,17 @@ module OmniEvent
 
     # Class methods for Strategy
     module ClassMethods
-      # Returns an inherited set of default options set at the class-level
+      # Default options for all strategies which can be overriden at the class-level
       # for each strategy.
       def default_options
-        existing = superclass.respond_to?(:default_options) ? superclass.default_options : {}
-        @default_options ||= OmniEvent::Strategy::Options.new(existing)
+        @default_options ||= begin
+          d_opts = OmniEvent::Strategy::Options.new
+          d_opts.from_time = Time.now
+
+          d_opts.merge!(superclass.default_options) if superclass.respond_to?(:default_options)
+
+          d_opts
+        end
       end
 
       # This allows for more declarative subclassing of strategies by allowing
@@ -109,9 +115,18 @@ module OmniEvent
       end
 
       # Make sure that all of the args have been dealt with, otherwise error out.
-      raise ArgumentError, "Received wrong number of arguments. #{args.inspect}" unless args.empty?
 
       yield options if block_given?
+
+      validate_options
+    end
+
+    def validate_options
+      # rubocop:disable Style/GuardClause
+      if options[:from_time] && !options[:from_time].respond_to?(:strftime)
+        raise ArgumentError, "from_time must be a valid ruby time object"
+      end
+      # rubocop:enable Style/GuardClause
     end
 
     def request(method, opts)
@@ -127,11 +142,7 @@ module OmniEvent
       @token = options[:token]
     end
 
-    def event
-      raise NotImplementedError
-    end
-
-    def event_list
+    def list_events
       raise NotImplementedError
     end
 
