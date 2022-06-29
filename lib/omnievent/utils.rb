@@ -79,7 +79,7 @@ module OmniEvent
     end
 
     def convert_time_to_iso8601(obj, attr)
-      obj.send("#{attr}=", Time.parse(obj.send(attr)).iso8601(3))
+      obj.send("#{attr}=", Time.parse(obj.send(attr)).iso8601)
     end
   end
 end

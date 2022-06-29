@@ -59,7 +59,7 @@ RSpec.describe OmniEvent::Strategies::Developer do
         events = OmniEvent.list_events(:developer, from_time: Time.now + (60 * 60 * 24 * 60))
         expect(events.size).to eq(1)
         expect(events[0].data.send("start_time").to_s).to eq(
-          (Time.now + (60 * 60 * 24 * 60) + (60 * 60 * 2)).iso8601(3)
+          (Time.now + (60 * 60 * 24 * 60) + (60 * 60 * 2)).iso8601
         )
       end
 
@@ -78,7 +78,7 @@ RSpec.describe OmniEvent::Strategies::Developer do
 
         events = OmniEvent.list_events(:developer, from_time: (Time.now - (60 * 60 * 24 * 60) - (60 * 60 * 2)))
         expect(events.size).to eq(2)
-        expect(events[0].data.send("start_time")).to eq((Time.now - (60 * 60 * 24 * 60)).iso8601(3))
+        expect(events[0].data.send("start_time")).to eq((Time.now - (60 * 60 * 24 * 60)).iso8601)
       end
     end
   end
