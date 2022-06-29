@@ -126,7 +126,7 @@ module OmniEvent
           id
           created_at
           updated_at
-          locale
+          language
           taxonomies
         ]
       end
@@ -143,8 +143,8 @@ module OmniEvent
         OmniEvent::Utils.valid_time?(updated_at)
       end
 
-      def locale_valid?
-        OmniEvent::Utils.valid_language_code?(locale)
+      def language_valid?
+        OmniEvent::Utils.valid_language_code?(language)
       end
 
       def taxonomies_valid?

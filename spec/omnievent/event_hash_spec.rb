@@ -118,14 +118,14 @@ RSpec.describe OmniEvent::EventHash do
       end
 
       context "validation" do
-        it "validates valid locales" do
-          subject.metadata.locale = "en"
-          expect(subject.metadata.locale_valid?).to eq(true)
+        it "validates valid languages" do
+          subject.metadata.language = "en"
+          expect(subject.metadata.language_valid?).to eq(true)
         end
 
-        it "invalidates invalid locales" do
-          subject.metadata.locale = "pbj"
-          expect(subject.metadata.locale_valid?).to eq(false)
+        it "invalidates invalid languages" do
+          subject.metadata.language = "pbj"
+          expect(subject.metadata.language_valid?).to eq(false)
         end
 
         it "validates valid taxonomies" do
