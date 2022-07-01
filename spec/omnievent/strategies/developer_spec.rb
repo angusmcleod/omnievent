@@ -23,7 +23,9 @@ RSpec.describe OmniEvent::Strategies::Developer do
     end
 
     it "returns events with metadata" do
-      expect(@events[0].metadata.id).to eq(raw_data["events"][0]["id"])
+      instance = OmniEvent.strategy_instance(:developer)
+      uuid_name = "#{instance.options.domain}:#{raw_data["events"][0]["id"]}"
+      expect(@events[0].metadata.uid).to eq(OmniEvent::Utils.generate_uuid(uuid_name).to_s)
     end
 
     it "returns events with associated location data" do

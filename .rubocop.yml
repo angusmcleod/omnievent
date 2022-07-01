@@ -15,7 +15,7 @@ Metrics/BlockLength:
 
 Metrics/MethodLength:
   CountComments: false
-  Max: 20
+  Max: 25
 
 Metrics/ClassLength:
   Max: 150

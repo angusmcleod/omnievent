@@ -123,7 +123,7 @@ module OmniEvent
       # The permitted MetadataHash attributes.
       def self.permitted_attributes
         %w[
-          id
+          uid
           created_at
           updated_at
           language
@@ -131,8 +131,8 @@ module OmniEvent
         ]
       end
 
-      def id_valid?
-        OmniEvent::Utils.valid_type?(id, :string)
+      def uid_valid?
+        OmniEvent::Utils.valid_uuid?(uid)
       end
 
       def created_at_valid?
@@ -161,10 +161,10 @@ module OmniEvent
       # The permitted MetadataHash attributes.
       def self.permitted_attributes
         {
-          location: %w[name address city postal_code country latitude longitude url],
-          virtual_location: { "entry_points": %w[uri type code label] },
-          organizer: %w[name email uris],
-          registrations: %w[name email status]
+          location: %w[uid name address city postal_code country latitude longitude url],
+          virtual_location: { "uid": "", "entry_points": %w[uri type code label] },
+          organizer: %w[uid name email uris],
+          registrations: %w[uid name email status]
         }
       end
 
@@ -184,6 +184,8 @@ module OmniEvent
 
         location.all? do |key, value|
           case key
+          when "uid"
+            OmniEvent::Utils.valid_uuid?(value)
           when "name", "address", "city", "postal_code"
             OmniEvent::Utils.valid_type?(value, :string)
           when "country"
@@ -202,6 +204,8 @@ module OmniEvent
         return true unless virtual_location
         return false unless virtual_location.is_a?(Hash)
         return true unless virtual_location["entry_points"]
+
+        return false if virtual_location["uid"] && !OmniEvent::Utils.valid_uuid?(virtual_location["uid"])
 
         virtual_location["entry_points"].all? do |entry_point|
           return false unless entry_point.is_a?(Hash)
@@ -228,6 +232,8 @@ module OmniEvent
 
         organizer.all? do |key, value|
           case key
+          when "uid"
+            OmniEvent::Utils.valid_uuid?(value)
           when "name"
             OmniEvent::Utils.valid_type?(value, :string)
           when "email"
@@ -259,6 +265,8 @@ module OmniEvent
 
           registration.all? do |key, value|
             case key
+            when "uid"
+              OmniEvent::Utils.valid_uuid?(value)
             when "name"
               OmniEvent::Utils.valid_type?(value, :string)
             when "email"

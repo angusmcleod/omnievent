@@ -13,10 +13,10 @@ RSpec.describe OmniEvent::EventHash do
   end
 
   it "converts a hash of metadata into a MetadataHash" do
-    id = "1234567"
-    subject.metadata = { id: id }
+    uid = "1234567"
+    subject.metadata = { uid: uid }
     expect(subject.metadata).to be_kind_of(OmniEvent::EventHash::MetadataHash)
-    expect(subject.metadata.id).to eq(id)
+    expect(subject.metadata.uid).to eq(uid)
   end
 
   it "has a subkey_class" do
@@ -118,6 +118,16 @@ RSpec.describe OmniEvent::EventHash do
       end
 
       context "validation" do
+        it "validates valid uids" do
+          subject.metadata.uid = "dc2a0eb5-4b5f-58b7-a29b-dfd6f28cc44b"
+          expect(subject.metadata.uid_valid?).to eq(true)
+        end
+
+        it "invalidates invalid uids" do
+          subject.metadata.uid = "12345"
+          expect(subject.metadata.uid_valid?).to eq(false)
+        end
+
         it "validates valid languages" do
           subject.metadata.language = "en"
           expect(subject.metadata.language_valid?).to eq(true)
@@ -142,7 +152,7 @@ RSpec.describe OmniEvent::EventHash do
 
     context "associated_data" do
       it "only permits listed attributes" do
-        subject.associated_data.tickets = { id: "12345" }
+        subject.associated_data.tickets = { uid: "12345" }
         expect(subject).not_to be_valid
       end
 

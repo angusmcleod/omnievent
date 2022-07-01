@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "json"
+require "uuidtools"
 
 module OmniEvent
   module Strategies
@@ -21,6 +22,7 @@ module OmniEvent
 
       option :token, "12345"
       option :name, "developer"
+      option :domain, "omnievent-gem.com"
 
       def self.raw_data
         fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "list_events.json")
@@ -65,12 +67,17 @@ module OmniEvent
             virtual_location: raw_event["virtual_location"]
           }
         )
+
         %w[start_time end_time].each do |time_attr|
           OmniEvent::Utils.convert_time_to_iso8601(event.data, time_attr)
         end
+
         %w[created_at updated_at].each do |time_attr|
           OmniEvent::Utils.convert_time_to_iso8601(event.metadata, time_attr)
         end
+
+        event.metadata.uid = OmniEvent::Utils.generate_uuid("#{options.domain}:#{raw_event["id"]}").to_s
+
         event
       end
 
