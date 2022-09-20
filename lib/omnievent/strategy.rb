@@ -18,10 +18,7 @@ module OmniEvent
       def default_options
         @default_options ||= begin
           d_opts = OmniEvent::Strategy::Options.new
-          d_opts.from_time = Time.now
-
           d_opts.merge!(superclass.default_options) if superclass.respond_to?(:default_options)
-
           d_opts
         end
       end
@@ -126,6 +123,9 @@ module OmniEvent
       if options[:from_time] && !options[:from_time].respond_to?(:strftime)
         raise ArgumentError, "from_time must be a valid ruby time object"
       end
+      if options[:to_time] && !options[:to_time].respond_to?(:strftime)
+        raise ArgumentError, "to_time must be a valid ruby time object"
+      end
       # rubocop:enable Style/GuardClause
     end
 
@@ -133,17 +133,35 @@ module OmniEvent
       options.deep_merge!(opts)
 
       authorize
-      return unless @token
+      return unless authorized?
 
       send(method)
     end
 
-    def authorize
-      @token = options[:token]
+    def authorize; end
+
+    def authorized?
+      raise NotImplementedError
+    end
+
+    def raw_events
+      raise NotImplementedError
+    end
+
+    def event_hash
+      raise NotImplementedError
     end
 
     def list_events
-      raise NotImplementedError
+      raw_events.each_with_object([]) do |raw_event, result|
+        event = event_hash(raw_event)
+
+        next unless event.valid?
+        next if options.from_time && Time.parse(event.data.start_time).utc < options.from_time.utc
+        next if options.to_time && Time.parse(event.data.start_time).utc > options.to_time.utc
+
+        result << event
+      end
     end
 
     # Direct access to the OmniEvent logger, automatically prefixed

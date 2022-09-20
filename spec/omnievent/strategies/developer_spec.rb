@@ -23,9 +23,7 @@ RSpec.describe OmniEvent::Strategies::Developer do
     end
 
     it "returns events with metadata" do
-      instance = OmniEvent.strategy_instance(:developer)
-      uuid_name = "#{instance.options.domain}:#{raw_data["events"][0]["id"]}"
-      expect(@events[0].metadata.uid).to eq(OmniEvent::Utils.generate_uuid(uuid_name).to_s)
+      expect(@events[0].metadata.uid).to eq(raw_data["events"][0]["id"])
     end
 
     it "returns events with associated location data" do
@@ -81,6 +79,34 @@ RSpec.describe OmniEvent::Strategies::Developer do
         events = OmniEvent.list_events(:developer, from_time: (Time.now - (60 * 60 * 24 * 60) - (60 * 60 * 2)))
         expect(events.size).to eq(2)
         expect(events[0].data.send("start_time")).to eq((Time.now - (60 * 60 * 24 * 60)).iso8601)
+      end
+    end
+
+    context "to_time" do
+      before do
+        Timecop.freeze(Time.local(1990))
+      end
+
+      after do
+        Timecop.return
+      end
+
+      it "filters our events after the to_time" do
+        OmniEvent::Strategies::Developer.instance_eval do
+          def raw_data
+            fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "list_events.json")
+            raw = JSON.parse(File.open(fixture).read).to_h
+            raw["events"][0]["start_time"] = Time.now.to_s
+            raw["events"][0]["end_time"] = (Time.now + (60 * 60 * 2)).to_s
+            raw["events"][1]["start_time"] = (Time.now + (60 * 60 * 24 * 60) + (60 * 60 * 2)).to_s
+            raw["events"][1]["end_time"] = (Time.now + (60 * 60 * 24 * 60) + (60 * 60 * 4)).to_s
+            raw
+          end
+        end
+
+        events = OmniEvent.list_events(:developer, to_time: Time.now + (60 * 60 * 24 * 60))
+        expect(events.size).to eq(1)
+        expect(events[0].data.send("start_time").to_s).to eq(Time.now.iso8601)
       end
     end
   end

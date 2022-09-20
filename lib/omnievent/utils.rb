@@ -4,7 +4,6 @@ require "uri"
 require "tzinfo"
 require "iso-639"
 require "time"
-require "uuidtools"
 
 module OmniEvent
   # Utility methods
@@ -75,21 +74,16 @@ module OmniEvent
       end
     end
 
-    def valid_uuid?(value)
-      # validates UUID v5 https://stackoverflow.com/questions/7905929/how-to-test-valid-uuid-guid
-      !!(value =~ /^[0-9A-F]{8}-[0-9A-F]{4}-5[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i)
+    def valid_uid?(value)
+      value.is_a?(String)
     end
 
     def all_valid_type?(array, type)
       valid_type?(array, :array) && array.all? { |t| valid_type?(t, type) }
     end
 
-    def convert_time_to_iso8601(obj, attr)
-      obj.send("#{attr}=", Time.parse(obj.send(attr)).iso8601)
-    end
-
-    def generate_uuid(name)
-      UUIDTools::UUID.sha1_create(UUIDTools::UUID_DNS_NAMESPACE, name)
+    def convert_time_to_iso8601(value)
+      Time.parse(value).iso8601
     end
   end
 end

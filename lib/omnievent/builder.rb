@@ -22,7 +22,6 @@ module OmniEvent
     # Registers a provider.
     def provider(name, *args, **opts, &block)
       klass = OmniEvent.provider_class(name)
-
       raise MissingStrategy, "Could not find matching strategy for #{klass.inspect}." unless klass
 
       unless OmniEvent.strategies.include?(klass)

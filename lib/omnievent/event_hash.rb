@@ -9,7 +9,11 @@ module OmniEvent
 
     # Tells you if this is considered to be a valid EventHash.
     def valid?
-      provider? && data? && data.valid? && metadata.valid? && associated_data.valid?
+      provider? &&
+        data? &&
+        data.valid? &&
+        (!metadata || metadata.valid?) &&
+        (!associated_data || associated_data.valid?)
     end
 
     def regular_writer(key, value)
@@ -132,7 +136,7 @@ module OmniEvent
       end
 
       def uid_valid?
-        OmniEvent::Utils.valid_uuid?(uid)
+        OmniEvent::Utils.valid_uid?(uid)
       end
 
       def created_at_valid?
@@ -185,7 +189,7 @@ module OmniEvent
         location.all? do |key, value|
           case key
           when "uid"
-            OmniEvent::Utils.valid_uuid?(value)
+            OmniEvent::Utils.valid_uid?(value)
           when "name", "address", "city", "postal_code"
             OmniEvent::Utils.valid_type?(value, :string)
           when "country"
@@ -205,7 +209,7 @@ module OmniEvent
         return false unless virtual_location.is_a?(Hash)
         return true unless virtual_location["entry_points"]
 
-        return false if virtual_location["uid"] && !OmniEvent::Utils.valid_uuid?(virtual_location["uid"])
+        return false if virtual_location["uid"] && !OmniEvent::Utils.valid_uid?(virtual_location["uid"])
 
         virtual_location["entry_points"].all? do |entry_point|
           return false unless entry_point.is_a?(Hash)
@@ -233,7 +237,7 @@ module OmniEvent
         organizer.all? do |key, value|
           case key
           when "uid"
-            OmniEvent::Utils.valid_uuid?(value)
+            OmniEvent::Utils.valid_uid?(value)
           when "name"
             OmniEvent::Utils.valid_type?(value, :string)
           when "email"
@@ -266,7 +270,7 @@ module OmniEvent
           registration.all? do |key, value|
             case key
             when "uid"
-              OmniEvent::Utils.valid_uuid?(value)
+              OmniEvent::Utils.valid_uid?(value)
             when "name"
               OmniEvent::Utils.valid_type?(value, :string)
             when "email"

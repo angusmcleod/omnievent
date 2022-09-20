@@ -23,7 +23,10 @@ module OmniEvent
   class ActiveStrategies < OmniEvent::KeyStore; end
 
   EVENT_LIST_OPTIONS = %i[
+    uri
     from_time
+    to_time
+    file
   ].freeze
 
   class << self
@@ -64,13 +67,11 @@ module OmniEvent
       raise ArgumentError, "You need to pass a provider name as the first argument." unless provider
 
       opts = opts.slice(*EVENT_LIST_OPTIONS)
-
       strategy_instance(provider).request(:list_events, opts)
     end
 
     def strategy_instance(provider)
       klass = provider_class(provider)
-
       raise MissingStrategy, "Could not find matching strategy for #{klass.inspect}." unless klass
 
       strategy_proc = active_strategies[klass]

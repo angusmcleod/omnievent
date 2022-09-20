@@ -124,7 +124,7 @@ RSpec.describe OmniEvent::EventHash do
         end
 
         it "invalidates invalid uids" do
-          subject.metadata.uid = "12345"
+          subject.metadata.uid = 12_345
           expect(subject.metadata.uid_valid?).to eq(false)
         end
 
