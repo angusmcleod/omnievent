@@ -26,7 +26,6 @@ module OmniEvent
     uri
     from_time
     to_time
-    file
   ].freeze
 
   class << self

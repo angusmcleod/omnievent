@@ -51,8 +51,14 @@ module OmniEvent
         # All attribute values are valid
         self.class.permitted_attributes.all? do |attribute|
           value = send(attribute.to_s)
-          !value || send("#{attribute}_valid?")
+          return true if value.to_s.empty? || send("#{attribute}_valid?")
+          invalid << attribute
+          false
         end
+      end
+
+      def invalid
+        @invalid ||= []
       end
     end
 
