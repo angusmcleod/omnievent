@@ -16,7 +16,7 @@ Install the gem as follows:
 
     $ gem install omnievent
 
-## Usage (development only)
+## Usage
 
 > Please note that this gem is pre release and is not yet ready for production.
 
