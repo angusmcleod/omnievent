@@ -22,12 +22,6 @@ module OmniEvent
 
   class ActiveStrategies < OmniEvent::KeyStore; end
 
-  EVENT_LIST_OPTIONS = %i[
-    uri
-    from_time
-    to_time
-  ].freeze
-
   class << self
     # The default logger.
     def default_logger
@@ -65,7 +59,6 @@ module OmniEvent
     def list_events(provider = nil, opts = {})
       raise ArgumentError, "You need to pass a provider name as the first argument." unless provider
 
-      opts = opts.slice(*EVENT_LIST_OPTIONS)
       strategy_instance(provider).request(:list_events, opts)
     end
 

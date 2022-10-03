@@ -19,9 +19,7 @@ module OmniEvent
     class Developer
       include OmniEvent::Strategy
 
-      option :token, "12345"
       option :name, "developer"
-      option :uri, "https://omnievent-gem.com"
 
       def self.raw_data
         fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "list_events.json")
@@ -43,21 +41,17 @@ module OmniEvent
           }
         )
 
-        event.data.start_time = OmniEvent::Utils.convert_time_to_iso8601(event.data.start_time)
-        event.data.end_time = OmniEvent::Utils.convert_time_to_iso8601(event.data.end_time)
-        event.metadata.created_at = OmniEvent::Utils.convert_time_to_iso8601(event.metadata.created_at)
-        event.metadata.updated_at = OmniEvent::Utils.convert_time_to_iso8601(event.metadata.updated_at)
+        event.data.start_time = format_time(event.data.start_time)
+        event.data.end_time = format_time(event.data.end_time)
+        event.metadata.created_at = format_time(event.metadata.created_at)
+        event.metadata.updated_at = format_time(event.metadata.updated_at)
         event.metadata.uid = raw_event["id"]
 
         event
       end
 
-      def authorize
-        @token = options.token
-      end
-
       def authorized?
-        !!@token
+        true
       end
 
       protected

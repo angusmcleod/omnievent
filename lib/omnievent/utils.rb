@@ -28,10 +28,6 @@ module OmniEvent
       false
     end
 
-    def valid_timezone?(value)
-      TZInfo::Timezone.all_identifiers.include?(value)
-    end
-
     def valid_language_code?(value)
       !!ISO_639.find_by_code(value)
     end
@@ -84,6 +80,8 @@ module OmniEvent
 
     def convert_time_to_iso8601(value)
       Time.parse(value).iso8601
+    rescue ArgumentError
+      nil
     end
   end
 end

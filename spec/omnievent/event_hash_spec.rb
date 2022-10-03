@@ -3,7 +3,7 @@
 require "time"
 
 RSpec.describe OmniEvent::EventHash do
-  subject { OmniEvent::EventHash.new }
+  subject { described_class.new }
 
   it "converts a hash of data into a DataHash" do
     start_time = Time.now.iso8601
@@ -20,12 +20,12 @@ RSpec.describe OmniEvent::EventHash do
   end
 
   it "has a subkey_class" do
-    expect(OmniEvent::EventHash.subkey_class).to eq Hashie::Mash
+    expect(described_class.subkey_class).to eq Hashie::Mash
   end
 
   describe "#valid?" do
     subject do
-      OmniEvent::EventHash.new(
+      described_class.new(
         provider: "eventbrite",
         data: { start_time: Time.now.iso8601, name: "My Event" },
         metadata: {},
@@ -69,16 +69,6 @@ RSpec.describe OmniEvent::EventHash do
           expect(subject.data.end_time_valid?).to eq(false)
         end
 
-        it "validates valid timezones" do
-          subject.data.timezone = "Europe/Copenhagen"
-          expect(subject.data.timezone_valid?).to eq(true)
-        end
-
-        it "invalidates invalid timezones" do
-          subject.data.timezone = "Copenhagen"
-          expect(subject.data.timezone_valid?).to eq(false)
-        end
-
         it "validates valid strings" do
           subject.data.name = "My Event"
           expect(subject.data.name_valid?).to eq(true)
@@ -87,16 +77,6 @@ RSpec.describe OmniEvent::EventHash do
         it "invalidates invalid strings" do
           subject.data.name = { en: "My Event" }
           expect(subject.data.name_valid?).to eq(false)
-        end
-
-        it "validates valid statuses" do
-          subject.data.status = "draft"
-          expect(subject.data.status_valid?).to eq(true)
-        end
-
-        it "invalidates invalid statuses" do
-          subject.data.status = "live"
-          expect(subject.data.status_valid?).to eq(false)
         end
 
         it "validates valid url" do
@@ -136,6 +116,16 @@ RSpec.describe OmniEvent::EventHash do
         it "invalidates invalid languages" do
           subject.metadata.language = "pbj"
           expect(subject.metadata.language_valid?).to eq(false)
+        end
+
+        it "validates valid statuses" do
+          subject.metadata.status = "draft"
+          expect(subject.metadata.status_valid?).to eq(true)
+        end
+
+        it "invalidates invalid statuses" do
+          subject.metadata.status = "live"
+          expect(subject.metadata.status_valid?).to eq(false)
         end
 
         it "validates valid taxonomies" do

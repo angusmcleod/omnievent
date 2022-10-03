@@ -4,7 +4,7 @@ RSpec.describe OmniEvent::Strategy do
   describe ".default_options" do
     it "is inherited from a parent class" do
       superklass = Class.new
-      superklass.send :include, OmniEvent::Strategy
+      superklass.send :include, described_class
       superklass.configure do |c|
         c.foo = "bar"
       end
@@ -17,7 +17,7 @@ RSpec.describe OmniEvent::Strategy do
   describe ".configure" do
     subject do
       c = Class.new
-      c.send(:include, OmniEvent::Strategy)
+      c.send(:include, described_class)
     end
 
     context "when block is passed" do
@@ -47,7 +47,7 @@ RSpec.describe OmniEvent::Strategy do
 
   it "raises a NotImplementedError when strategy has not implemented interface methods" do
     strategy = Class.new
-    strategy.send(:include, OmniEvent::Strategy)
+    strategy.send(:include, described_class)
     expect { strategy.new.send("list_events") }.to raise_error(NotImplementedError)
   end
 end

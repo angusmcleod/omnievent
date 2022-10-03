@@ -52,6 +52,7 @@ module OmniEvent
         self.class.permitted_attributes.all? do |attribute|
           value = send(attribute.to_s)
           return true if value.to_s.empty? || send("#{attribute}_valid?")
+
           invalid << attribute
           false
         end
@@ -72,10 +73,8 @@ module OmniEvent
         %w[
           start_time
           end_time
-          timezone
           name
           description
-          status
           url
         ]
       end
@@ -87,14 +86,6 @@ module OmniEvent
         ]
       end
 
-      def self.permitted_statuses
-        %w[
-          draft
-          published
-          cancelled
-        ]
-      end
-
       def start_time_valid?
         OmniEvent::Utils.valid_time?(start_time)
       end
@@ -103,20 +94,12 @@ module OmniEvent
         OmniEvent::Utils.valid_time?(end_time)
       end
 
-      def timezone_valid?
-        OmniEvent::Utils.valid_timezone?(timezone)
-      end
-
       def name_valid?
         OmniEvent::Utils.valid_type?(name, :string)
       end
 
       def description_valid?
         OmniEvent::Utils.valid_type?(name, :string)
-      end
-
-      def status_valid?
-        self.class.permitted_statuses.include?(status)
       end
 
       def url_valid?
@@ -137,7 +120,16 @@ module OmniEvent
           created_at
           updated_at
           language
+          status
           taxonomies
+        ]
+      end
+
+      def self.permitted_statuses
+        %w[
+          draft
+          published
+          cancelled
         ]
       end
 
@@ -155,6 +147,10 @@ module OmniEvent
 
       def language_valid?
         OmniEvent::Utils.valid_language_code?(language)
+      end
+
+      def status_valid?
+        self.class.permitted_statuses.include?(status)
       end
 
       def taxonomies_valid?

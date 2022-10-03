@@ -52,7 +52,7 @@ OmniEvent.list_events(:developer, opts)
 
 ##### Options
 
-`from_time`: List events from time. Default is the current time.
+`from_time`: List events from time.
 
 ## License
 

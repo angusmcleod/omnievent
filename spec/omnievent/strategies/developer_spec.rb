@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
+require "timecop"
+require "active_support/core_ext/numeric/time"
+
 RSpec.describe OmniEvent::Strategies::Developer do
-  let(:raw_data) { OmniEvent::Strategies::Developer.raw_data }
+  let(:raw_data) { described_class.raw_data }
 
   before do
     OmniEvent::Builder.new do
@@ -44,41 +47,41 @@ RSpec.describe OmniEvent::Strategies::Developer do
       end
 
       it "filters our events before the from_time" do
-        OmniEvent::Strategies::Developer.instance_eval do
+        described_class.instance_eval do
           def raw_data
             fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "list_events.json")
             raw = JSON.parse(File.open(fixture).read).to_h
             raw["events"][0]["start_time"] = Time.now.to_s
-            raw["events"][0]["end_time"] = (Time.now + (60 * 60 * 2)).to_s
-            raw["events"][1]["start_time"] = (Time.now + (60 * 60 * 24 * 60) + (60 * 60 * 2)).to_s
-            raw["events"][1]["end_time"] = (Time.now + (60 * 60 * 24 * 60) + (60 * 60 * 4)).to_s
+            raw["events"][0]["end_time"] = 2.hours.from_now.to_s
+            raw["events"][1]["start_time"] = (60.days.from_now + 2.hours).to_s
+            raw["events"][1]["end_time"] = (60.days.from_now + 4.hours).to_s
             raw
           end
         end
 
-        events = OmniEvent.list_events(:developer, from_time: Time.now + (60 * 60 * 24 * 60))
+        events = OmniEvent.list_events(:developer, from_time: Time.now + 60.days)
         expect(events.size).to eq(1)
         expect(events[0].data.send("start_time").to_s).to eq(
-          (Time.now + (60 * 60 * 24 * 60) + (60 * 60 * 2)).iso8601
+          (Time.now + 60.days + 2.hours).iso8601
         )
       end
 
       it "works if the from_time is in the past" do
-        OmniEvent::Strategies::Developer.instance_eval do
+        described_class.instance_eval do
           def raw_data
             fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "list_events.json")
             raw = JSON.parse(File.open(fixture).read).to_h
-            raw["events"][0]["start_time"] = (Time.now - (60 * 60 * 24 * 60)).to_s
-            raw["events"][0]["end_time"] = (Time.now - (60 * 60 * 24 * 60) - (60 * 60 * 2)).to_s
+            raw["events"][0]["start_time"] = 60.days.ago.to_s
+            raw["events"][0]["end_time"] = (60.days.ago - 2.hours).to_s
             raw["events"][1]["start_time"] = Time.now.to_s
-            raw["events"][1]["end_time"] = (Time.now + (60 * 60 * 2)).to_s
+            raw["events"][1]["end_time"] = 2.hours.from_now.to_s
             raw
           end
         end
 
-        events = OmniEvent.list_events(:developer, from_time: (Time.now - (60 * 60 * 24 * 60) - (60 * 60 * 2)))
+        events = OmniEvent.list_events(:developer, from_time: 60.days.ago - 2.hours)
         expect(events.size).to eq(2)
-        expect(events[0].data.send("start_time")).to eq((Time.now - (60 * 60 * 24 * 60)).iso8601)
+        expect(events[0].data.send("start_time")).to eq(60.days.ago.iso8601)
       end
     end
 
@@ -92,19 +95,19 @@ RSpec.describe OmniEvent::Strategies::Developer do
       end
 
       it "filters our events after the to_time" do
-        OmniEvent::Strategies::Developer.instance_eval do
+        described_class.instance_eval do
           def raw_data
             fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "list_events.json")
             raw = JSON.parse(File.open(fixture).read).to_h
             raw["events"][0]["start_time"] = Time.now.to_s
-            raw["events"][0]["end_time"] = (Time.now + (60 * 60 * 2)).to_s
-            raw["events"][1]["start_time"] = (Time.now + (60 * 60 * 24 * 60) + (60 * 60 * 2)).to_s
-            raw["events"][1]["end_time"] = (Time.now + (60 * 60 * 24 * 60) + (60 * 60 * 4)).to_s
+            raw["events"][0]["end_time"] = 2.hours.from_now.to_s
+            raw["events"][1]["start_time"] = (60.days.from_now + 2.hours).to_s
+            raw["events"][1]["end_time"] = (60.days.from_now + 4.hours).to_s
             raw
           end
         end
 
-        events = OmniEvent.list_events(:developer, to_time: Time.now + (60 * 60 * 24 * 60))
+        events = OmniEvent.list_events(:developer, to_time: 60.days.from_now)
         expect(events.size).to eq(1)
         expect(events[0].data.send("start_time").to_s).to eq(Time.now.iso8601)
       end

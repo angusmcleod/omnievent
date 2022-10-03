@@ -4,11 +4,15 @@ module OmniEvent
   # The Strategy is the base unit of OmniEvent's ability to handle
   # multiple event providers. It's substantially based on OmniAuth::Strategy.
   module Strategy
+    class NotImplementedError < NotImplementedError; end
     class Options < OmniEvent::KeyStore; end
 
     def self.included(base)
       OmniEvent.strategies << base
       base.extend ClassMethods
+      base.class_eval do
+        option :uid_delimiter, "-"
+      end
     end
 
     # Class methods for Strategy
@@ -175,6 +179,12 @@ module OmniEvent
 
     def name
       options[:name]
+    end
+
+    def format_time(time)
+      return nil if time.nil? || !time.respond_to?(:to_s)
+
+      OmniEvent::Utils.convert_time_to_iso8601(time.to_s)
     end
   end
 end

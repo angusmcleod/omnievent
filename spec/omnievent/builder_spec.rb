@@ -7,21 +7,21 @@ RSpec.describe OmniEvent::Builder do
 
   it "translates a symbol to a constant" do
     expect(OmniEvent::Strategies).to receive(:const_get).with("ExampleStrategy", false).and_call_original
-    OmniEvent::Builder.new do
+    described_class.new do
       provider :example_strategy
     end
   end
 
   it "raises a OmniEvent::MissingStrategy error if strategy is not present" do
     expect do
-      OmniEvent::Builder.new do
+      described_class.new do
         provider :another_strategy
       end
     end.to raise_error(OmniEvent::MissingStrategy)
   end
 
   it "adds strategy procs to active_strategies" do
-    OmniEvent::Builder.new do
+    described_class.new do
       provider :example_strategy
     end
     expect(OmniEvent.active_strategies.key?(OmniEvent::Strategies::ExampleStrategy)).to eq(true)
@@ -38,7 +38,7 @@ RSpec.describe OmniEvent::Builder do
 
     it "raises a OmniEvent::StrategyNotLoaded error if OmniEvent::Strategy is not included" do
       expect do
-        OmniEvent::Builder.new do
+        described_class.new do
           provider :another_strategy
         end
       end.to raise_error(OmniEvent::StrategyNotIncluded)
@@ -51,7 +51,7 @@ RSpec.describe OmniEvent::Builder do
 
       it "loads all strategies" do
         expect do
-          OmniEvent::Builder.new do
+          described_class.new do
             provider :example_strategy
             provider :another_strategy
           end
