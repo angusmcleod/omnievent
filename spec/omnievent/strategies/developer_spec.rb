@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "timecop"
+require "active_support"
 require "active_support/core_ext/numeric/time"
 
 RSpec.describe OmniEvent::Strategies::Developer do
