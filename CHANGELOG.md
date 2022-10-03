@@ -1,5 +1,5 @@
 ## [Unreleased]
 
-## [0.1.0] - 2022-06-13
+## [0.1.0.pre1] - 2022-06-13
 
-- Initial release
+- Pre release
