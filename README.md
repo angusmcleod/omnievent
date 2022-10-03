@@ -1,4 +1,4 @@
-# OmniEvent (In Development)
+# OmniEvent (Pre Release)
 
 Manage events from any calendar, event discovery, event ticketing, event management, social network or video conferencing provider in ruby.
 
@@ -10,11 +10,15 @@ The research and its associated data will be made publicly available in the comi
 
 ## Installation
 
-The gem is still being developed and is not yet ready for installation. You can use it locally (see below).
+> Please note that this gem is pre release and is not yet ready for production.
+
+Install the gem as follows:
+
+    $ gem install omnievent
 
 ## Usage (development only)
 
-Please note that the gem is still being developed and is not yet ready for production use.
+> Please note that this gem is pre release and is not yet ready for production.
 
 ### Configure Providers
 
