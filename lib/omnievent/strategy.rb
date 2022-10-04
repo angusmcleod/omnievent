@@ -12,6 +12,8 @@ module OmniEvent
       base.extend ClassMethods
       base.class_eval do
         option :uid_delimiter, "-"
+        option :from_time
+        option :to_time
       end
     end
 

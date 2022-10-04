@@ -20,14 +20,14 @@ module OmniEvent
       include OmniEvent::Strategy
 
       option :name, "developer"
+      option :uri, File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "list_events.json")
 
-      def self.raw_data
-        fixture = File.join(File.expand_path("../../..", __dir__), "spec", "fixtures", "list_events.json")
-        @raw_data ||= JSON.parse(File.open(fixture).read).to_h
+      def raw_data
+        @raw_data ||= JSON.parse(File.open(options.uri).read).to_h
       end
 
       def raw_events
-        self.class.raw_data["events"]
+        raw_data["events"]
       end
 
       def event_hash(raw_event)
