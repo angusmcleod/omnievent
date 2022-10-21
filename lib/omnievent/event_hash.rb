@@ -122,6 +122,9 @@ module OmniEvent
           language
           status
           taxonomies
+          sequence
+          series_id
+          occurrence_id
         ]
       end
 
@@ -134,7 +137,7 @@ module OmniEvent
       end
 
       def uid_valid?
-        OmniEvent::Utils.valid_uid?(uid)
+        OmniEvent::Utils.valid_type?(uid, :string)
       end
 
       def created_at_valid?
@@ -155,6 +158,18 @@ module OmniEvent
 
       def taxonomies_valid?
         OmniEvent::Utils.all_valid_type?(taxonomies, :string)
+      end
+
+      def sequence_valid?
+        OmniEvent::Utils.valid_type?(sequence, :string)
+      end
+
+      def series_id_valid?
+        OmniEvent::Utils.valid_type?(series_id, :string)
+      end
+
+      def occurrence_id_valid?
+        OmniEvent::Utils.valid_type?(occurrence_id, :string)
       end
     end
 

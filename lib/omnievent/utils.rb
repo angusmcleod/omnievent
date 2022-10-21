@@ -70,10 +70,6 @@ module OmniEvent
       end
     end
 
-    def valid_uid?(value)
-      value.is_a?(String)
-    end
-
     def all_valid_type?(array, type)
       valid_type?(array, :array) && array.all? { |t| valid_type?(t, type) }
     end
