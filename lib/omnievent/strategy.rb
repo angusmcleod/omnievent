@@ -170,6 +170,18 @@ module OmniEvent
       end
     end
 
+    def create_event
+      raise NotImplementedError
+    end
+
+    def update_event
+      raise NotImplementedError
+    end
+
+    def destroy_event
+      raise NotImplementedError
+    end
+
     # Direct access to the OmniEvent logger, automatically prefixed
     # with this strategy's name.
     #

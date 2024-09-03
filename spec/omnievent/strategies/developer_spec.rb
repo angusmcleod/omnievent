@@ -6,6 +6,15 @@ require "active_support/core_ext/numeric/time"
 
 RSpec.describe OmniEvent::Strategies::Developer do
   let(:raw_data) { described_class.new.raw_data }
+  let(:event_data) do
+    {
+      start_time: "2017-04-15T11:00:00.0000000",
+      end_time: "2017-04-15T12:00:00.0000000",
+      name: "Let's go brunch",
+      description: "Does noon work for you?",
+      url: "https://event.com/brunch"
+    }
+  end
 
   before do
     OmniEvent::Builder.new do
@@ -115,6 +124,55 @@ RSpec.describe OmniEvent::Strategies::Developer do
         expect(events.size).to eq(1)
         expect(events[0].data.send("start_time").to_s).to eq(Time.now.iso8601)
       end
+    end
+  end
+
+  describe "create_event" do
+    it "returns an event" do
+      event = OmniEvent.create_event(
+        :developer,
+        event: OmniEvent::EventHash.new(
+          provider: :developer,
+          data: event_data
+        )
+      )
+      expect(event).to be_kind_of(OmniEvent::EventHash)
+      expect(event.data.start_time).to eq(event_data[:start_time])
+      expect(event.data.end_time).to eq(event_data[:end_time])
+      expect(event.data.name).to eq(event_data[:name])
+      expect(event.data.description).to eq(event_data[:description])
+      expect(event.data.url).to eq(event_data[:url])
+    end
+  end
+
+  describe "update_event" do
+    it "returns an event" do
+      event = OmniEvent.update_event(
+        :developer,
+        event: OmniEvent::EventHash.new(
+          provider: :developer,
+          data: event_data
+        )
+      )
+      expect(event).to be_kind_of(OmniEvent::EventHash)
+      expect(event.data.start_time).to eq(event_data[:start_time])
+      expect(event.data.end_time).to eq(event_data[:end_time])
+      expect(event.data.name).to eq(event_data[:name])
+      expect(event.data.description).to eq(event_data[:description])
+      expect(event.data.url).to eq(event_data[:url])
+    end
+  end
+
+  describe "destroy_event" do
+    it "returns an boolean" do
+      event = OmniEvent.destroy_event(
+        :developer,
+        event: OmniEvent::EventHash.new(
+          provider: :developer,
+          data: event_data
+        )
+      )
+      expect(event).to eq(true)
     end
   end
 end

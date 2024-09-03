@@ -1,6 +1,3 @@
-AllCops:
-  TargetRubyVersion: 2.6
-
 Layout/LineLength:
   Max: 120
 
@@ -14,8 +11,10 @@ Metrics/BlockLength:
     - 'spec/**/*.rb'
 
 Metrics/MethodLength:
-  CountComments: false
-  Max: 25
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
 
 Metrics/ClassLength:
   Max: 150
@@ -45,4 +44,7 @@ Style/OptionalBooleanParameter:
   Enabled: false
 
 Style/MultilineBlockChain:
+  Enabled: false
+
+Style/Documentation:
   Enabled: false

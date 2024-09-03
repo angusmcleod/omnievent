@@ -30,6 +30,18 @@ module OmniEvent
         raw_data["events"]
       end
 
+      def create_event
+        options.event
+      end
+
+      def update_event
+        options.event
+      end
+
+      def destroy_event
+        true
+      end
+
       def event_hash(raw_event)
         event = OmniEvent::EventHash.new(
           provider: name,
