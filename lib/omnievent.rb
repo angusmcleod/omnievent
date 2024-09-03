@@ -65,7 +65,7 @@ module OmniEvent
     # Create event.
     def create_event(provider = nil, opts = {})
       raise ArgumentError, "You need to pass a provider name as the first argument." unless provider
-      raise ArgumentError, "You need to pass an :event in opts." unless has_event?(opts)
+      raise ArgumentError, "You need to pass an :event in opts." unless opts_has_event?(opts)
       raise ArgumentError, "Event is not valid." unless opts[:event].valid?
 
       strategy_instance(provider).request(:create_event, opts)
@@ -74,7 +74,7 @@ module OmniEvent
     # Update event.
     def update_event(provider = nil, opts = {})
       raise ArgumentError, "You need to pass a provider name as the first argument." unless provider
-      raise ArgumentError, "You need to pass an :event in opts." unless has_event?(opts)
+      raise ArgumentError, "You need to pass an :event in opts." unless opts_has_event?(opts)
 
       strategy_instance(provider).request(:update_event, opts)
     end
@@ -82,13 +82,13 @@ module OmniEvent
     # Destroy event.
     def destroy_event(provider = nil, opts = {})
       raise ArgumentError, "You need to pass a provider name as the first argument." unless provider
-      raise ArgumentError, "You need to pass an :event in opts." unless has_event?(opts)
+      raise ArgumentError, "You need to pass an :event in opts." unless opts_has_event?(opts)
 
       strategy_instance(provider).request(:destroy_event, opts)
     end
 
-    def has_event?(opts)
-      opts[:event] && opts[:event].is_a?(OmniEvent::EventHash)
+    def opts_has_event?(opts)
+      opts[:event]&.is_a?(OmniEvent::EventHash)
     end
 
     def strategy_instance(provider)

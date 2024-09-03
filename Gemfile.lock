@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    omnievent (0.1.0.pre3)
+    omnievent (0.1.0.pre5)
       hashie (>= 3.4.6)
       iso-639 (~> 0.3.5)
       tzinfo (~> 2.0)
@@ -21,7 +21,7 @@ GEM
     hashie (5.0.0)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
-    iso-639 (0.3.5)
+    iso-639 (0.3.6)
     json (2.6.2)
     minitest (5.16.3)
     parallel (1.22.1)
