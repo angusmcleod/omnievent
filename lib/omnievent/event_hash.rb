@@ -10,8 +10,7 @@ module OmniEvent
     # Tells you if this is considered to be a valid EventHash.
     def valid?
       provider? &&
-        data? &&
-        data.valid? &&
+        (!data || data.valid?) &&
         (!metadata || metadata.valid?) &&
         (!associated_data || associated_data.valid?)
     end
