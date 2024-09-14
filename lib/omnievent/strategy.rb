@@ -162,7 +162,7 @@ module OmniEvent
       raw_events.each_with_object([]) do |raw_event, result|
         event = event_hash(raw_event)
 
-        next unless event.valid?
+        next unless event&.valid?
         next if options.from_time && Time.parse(event.data.start_time).utc < options.from_time.utc
         next if options.to_time && Time.parse(event.data.start_time).utc > options.to_time.utc
 
