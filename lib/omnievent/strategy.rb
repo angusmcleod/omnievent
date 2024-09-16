@@ -14,6 +14,7 @@ module OmniEvent
         option :uid_delimiter, "-"
         option :from_time
         option :to_time
+        option :match_name
       end
     end
 
@@ -131,6 +132,9 @@ module OmniEvent
       end
       if options[:to_time] && !options[:to_time].respond_to?(:strftime)
         raise ArgumentError, "to_time must be a valid ruby time object"
+      end
+      if options[:match_name] && !options[:match_name].is_a?(String)
+        raise ArgumentError, "match_name must be a string"
       end
       # rubocop:enable Style/GuardClause
     end
