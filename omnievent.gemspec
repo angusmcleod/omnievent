@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "activesupport", "~> 7.0"
   spec.add_development_dependency "byebug"
   spec.add_development_dependency "rspec", "~> 3.4"
-  spec.add_dependency "hashie", ">= 3.4.6"
-  spec.add_dependency "iso-639", "~> 0.3.5"
-  spec.add_dependency "tzinfo", "~> 2.0"
+  spec.add_development_dependency "hashie", ">= 3.4.6"
+  spec.add_development_dependency "iso-639", "~> 0.3.5"
+  spec.add_development_dependency "tzinfo", "~> 2.0"
 end
