@@ -126,17 +126,13 @@ module OmniEvent
     end
 
     def validate_options
-      # rubocop:disable Style/GuardClause
       if options[:from_time] && !options[:from_time].respond_to?(:strftime)
         raise ArgumentError, "from_time must be a valid ruby time object"
       end
       if options[:to_time] && !options[:to_time].respond_to?(:strftime)
         raise ArgumentError, "to_time must be a valid ruby time object"
       end
-      if options[:match_name] && !options[:match_name].is_a?(String)
-        raise ArgumentError, "match_name must be a string"
-      end
-      # rubocop:enable Style/GuardClause
+      raise ArgumentError, "match_name must be a string" if options[:match_name] && !options[:match_name].is_a?(String)
     end
 
     def request(method, opts)
@@ -169,6 +165,7 @@ module OmniEvent
         next unless event&.valid?
         next if options.from_time && Time.parse(event.data.start_time).utc < options.from_time.utc
         next if options.to_time && Time.parse(event.data.start_time).utc > options.to_time.utc
+        next if options.match_name && !event.data.name.downcase.include?(options.match_name.downcase)
 
         result << event
       end

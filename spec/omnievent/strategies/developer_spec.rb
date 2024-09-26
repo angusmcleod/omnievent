@@ -108,7 +108,7 @@ RSpec.describe OmniEvent::Strategies::Developer do
         Timecop.return
       end
 
-      it "filters our events after the to_time" do
+      it "filters out events after the to_time" do
         described_class.class_eval do
           def raw_data
             raw = JSON.parse(File.open(options.uri).read).to_h
@@ -123,6 +123,22 @@ RSpec.describe OmniEvent::Strategies::Developer do
         events = OmniEvent.list_events(:developer, to_time: 60.days.from_now)
         expect(events.size).to eq(1)
         expect(events[0].data.send("start_time").to_s).to eq(Time.now.iso8601)
+      end
+    end
+
+    context "match_name" do
+      it "filters out events without matching names" do
+        described_class.class_eval do
+          def raw_data
+            raw = JSON.parse(File.open(options.uri).read).to_h
+            raw["events"][0]["name"] = "the match"
+            raw
+          end
+        end
+
+        events = OmniEvent.list_events(:developer, match_name: "the match")
+        expect(events.size).to eq(1)
+        expect(events[0].data.name).to eq("the match")
       end
     end
   end
